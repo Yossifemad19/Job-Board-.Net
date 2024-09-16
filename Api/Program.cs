@@ -30,6 +30,7 @@ namespace Api
             builder.Services.AddControllers()
                 .AddFluentValidation(f => {
                     f.RegisterValidatorsFromAssemblyContaining<CompanyDto>();
+                    f.RegisterValidatorsFromAssemblyContaining<UserResiterDto>();
                 })
                 .AddJsonOptions(options=>
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
@@ -47,6 +48,8 @@ namespace Api
             }
 
             app.UseHttpsRedirection();
+
+            app.UseStaticFiles();
 
             app.UseAuthorization();
 

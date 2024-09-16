@@ -11,6 +11,13 @@ namespace Api.Helpers
             //Company maps
             CreateMap<CompanyDto,Company>()
                 .ForMember(x=>x.PasswordHash,opt=>opt.Ignore());
+            CreateMap<Company, CompanyToReturn>();
+
+            CreateMap<UserResiterDto,AppUser>()
+                .ForMember(x => x.PasswordHash, opt => opt.Ignore());
+
+            CreateMap<AppUser, UserToReturn>();
+
         }
     }
 }
