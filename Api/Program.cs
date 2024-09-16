@@ -1,6 +1,14 @@
 
+using Api.DTOs;
+using Core.Interfaces;
 using Infrastructure.Data;
+using Infrastructure.Services;
+using LMS.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
+using System.Text.Json.Serialization;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 
 namespace Api
 {
@@ -15,7 +23,16 @@ namespace Api
                 opt.UseSqlServer(builder.Configuration.GetConnectionString("default"))
             );
 
-            builder.Services.AddControllers();
+            builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+            builder.Services.AddSingleton<ITokenService,TokenService>();
+            builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
+            builder.Services.AddControllers()
+                .AddFluentValidation(f => {
+                    f.RegisterValidatorsFromAssemblyContaining<CompanyDto>();
+                })
+                .AddJsonOptions(options=>
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
