@@ -10,12 +10,14 @@ namespace Api.Controllers
     [Route("api/[Controller]")]
     public class CompanyController:ControllerBase
     {
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IAuthenticationService _authService;
         private readonly ITokenService _tokenService;
         private readonly IMapper _mapper;
 
-        public CompanyController(IAuthenticationService authService,ITokenService tokenService ,IMapper mapper)
+        public CompanyController(IUnitOfWork unitOfWork,IAuthenticationService authService,ITokenService tokenService ,IMapper mapper)
         {
+            _unitOfWork = unitOfWork;
             _authService = authService;
             _tokenService = tokenService;
             _mapper = mapper;
@@ -81,7 +83,18 @@ namespace Api.Controllers
             return Ok(await _authService.DoesCompanyExist(Email));
         }
 
-        
+
+        #endregion
+
+        #region Get Companies
+        [HttpGet("all")]
+        public async Task<ActionResult<IEnumerable<GetCompanyDto>>> GetAllCompanies()
+        {
+            var companies=await _unitOfWork.CompanyRepository.GetAllAsync();
+            if (companies is null)
+                return NotFound("not exist companies");
+            return Ok(_mapper.Map<IEnumerable<GetCompanyDto>>(companies));
+        }
         #endregion
     }
 

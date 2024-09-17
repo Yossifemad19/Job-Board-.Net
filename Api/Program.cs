@@ -9,6 +9,9 @@ using System.Reflection;
 using System.Text.Json.Serialization;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.Text;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Api
 {
@@ -18,6 +21,20 @@ namespace Api
         {
             var builder = WebApplication.CreateBuilder(args);
 
+
+
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["jwt:SecretKey"])),
+                        ValidIssuer = builder.Configuration["jwt:Issuer"],
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidAudience = builder.Configuration["jwt:Audience"],
+                        ValidateLifetime=true,
+                    });
             // Add services to the container.
             builder.Services.AddDbContext<ApplicationDbContext>(opt=>
                 opt.UseSqlServer(builder.Configuration.GetConnectionString("default"))
@@ -54,6 +71,7 @@ namespace Api
 
             app.UseStaticFiles();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
 
