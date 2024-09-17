@@ -1,8 +1,7 @@
 ﻿namespace Core.Entities
 {
-    public class Candidate:BaseEntity
+    public class Candidate:BaseEntity<int>
     {
-
         public string UserId { get; set; }
         public AppUser User { get; set; }
         // Relations

@@ -7,12 +7,12 @@ namespace Infrastructure.Services
 {
     public class AuthenticationService : IAuthenticationService
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly ITokenService _tokenService;
 
-        public AuthenticationService(ApplicationDbContext context,ITokenService tokenService)
+        public AuthenticationService(IUnitOfWork unitOfWork,ITokenService tokenService)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
             _tokenService = tokenService;
         }
 
@@ -20,21 +20,21 @@ namespace Infrastructure.Services
         {
 
             user.PasswordHash = GetHashedPassword(password);
-            _context.Users.Add(user);
-            return await _context.SaveChangesAsync() > 0;
+            _unitOfWork.UserRepository.Add(user);
+            return await _unitOfWork.CompleteAsync() > 0;
         }
 
         public async Task<bool> RegisterAsCompany(Company company, string password)
         {
 
             company.PasswordHash = GetHashedPassword(password);
-            _context.Companies.Add(company);
-            return await _context.SaveChangesAsync() > 0;
+            _unitOfWork.CompanyRepository.Add(company);
+            return await _unitOfWork.CompleteAsync() > 0;
         }
 
         public async Task<AppUser> LoginAsUser(string email, string password)
         {
-            var user =await _context.Users.SingleOrDefaultAsync(u=>u.Email==email);
+            var user =await _unitOfWork.UserRepository.GetUserByEmailAsync(email);
             if (user == null || !VerifyPassword(password,user.PasswordHash) ) {
                 return null;
             }
@@ -43,7 +43,7 @@ namespace Infrastructure.Services
 
         public async Task<Company> LoginAsCompany(string email, string password)
         {
-            var company = await _context.Companies.SingleOrDefaultAsync(u => u.Email == email);
+            var company = await _unitOfWork.CompanyRepository.GetCompanyByEmailAsync(email);
             if (company == null || !VerifyPassword(password, company.PasswordHash))
             {
                 return null;
@@ -54,13 +54,13 @@ namespace Infrastructure.Services
         public async Task<bool> DoesUserExist(string email)
         {
             
-            return  (await _context.Users.FirstOrDefaultAsync(u => u.Email==email) != null);
+            return  (await _unitOfWork.UserRepository.GetUserByEmailAsync(email) != null);
         }
 
         public async Task<bool> DoesCompanyExist(string email)
         {
 
-            return (await _context.Companies.FirstOrDefaultAsync(u => u.Email == email) != null);
+            return (await _unitOfWork.CompanyRepository.GetCompanyByEmailAsync(email) != null);
         }
 
         private string GetHashedPassword(string password)

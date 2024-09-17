@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace Core.Entities
 {
-    public abstract class BaseEntity
+    public abstract class BaseEntity<Tkey>:BaseClass<Tkey>
     {
-        public int Id { get; set; }
         public DateTime CreateAt { get; set; }= DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
         public bool IsActive { get; set; } = true;

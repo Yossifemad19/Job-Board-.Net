@@ -8,7 +8,7 @@ namespace Api.Validators
         public CompanyDtoValidator()
         {
             RuleFor(x => x.Name).NotEmpty();
-            RuleFor(x=>x.CompanySize).NotEmpty()
+            RuleFor(x=>x.CompanySize)
                 .IsInEnum()
                 .WithMessage("value must be in enum")
                 ;

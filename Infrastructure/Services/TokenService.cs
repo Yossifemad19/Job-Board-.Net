@@ -30,6 +30,7 @@ namespace LMS.Infrastructure.Services
         {
             var claims = new[]
             {
+                new Claim(ClaimTypes.NameIdentifier,user.Id),
                 new Claim(ClaimTypes.Email,user.Email),
                 new Claim(ClaimTypes.Role,role),
             };

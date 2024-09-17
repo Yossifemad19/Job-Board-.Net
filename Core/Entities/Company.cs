@@ -8,8 +8,12 @@ using System.Threading.Tasks;
 
 namespace Core.Entities
 {
-    public class Company:BaseEntity,IUser
+    public class Company:BaseEntity<string>,IUser
     {
+        public Company()
+        {
+            Id=Guid.NewGuid().ToString();
+        }
         public string Name { get; set; }
         public CompanySize CompanySize { get; set; }
         public string Email { get; set; }

@@ -22,7 +22,10 @@ namespace Api
             builder.Services.AddDbContext<ApplicationDbContext>(opt=>
                 opt.UseSqlServer(builder.Configuration.GetConnectionString("default"))
             );
-
+            builder.Services.AddScoped(typeof(IGenericRepository<,>),typeof(GenericRepository<,>));
+            builder.Services.AddScoped<IUserRepository,UserRepository>();
+            builder.Services.AddScoped<ICompanyRepository,CompanyRepository>();
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
             builder.Services.AddSingleton<ITokenService,TokenService>();
             builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
