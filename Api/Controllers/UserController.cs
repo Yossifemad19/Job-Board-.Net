@@ -1,4 +1,5 @@
 ﻿using Api.DTOs;
+using Api.DTOs.UserDtos;
 using Api.Extensions;
 using AutoMapper;
 using Core.Entities;

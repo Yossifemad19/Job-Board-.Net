@@ -1,5 +1,3 @@
-
-using Api.DTOs;
 using Core.Interfaces;
 using Infrastructure.Data;
 using Infrastructure.Services;
@@ -12,6 +10,8 @@ using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
+using Api.DTOs.CompanyDtos;
+using Api.DTOs.UserDtos;
 
 namespace Api
 {

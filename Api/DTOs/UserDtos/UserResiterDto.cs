@@ -1,4 +1,4 @@
-﻿namespace Api.DTOs
+﻿namespace Api.DTOs.UserDtos
 {
     public class UserResiterDto
     {

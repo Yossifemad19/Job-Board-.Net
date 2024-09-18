@@ -33,16 +33,33 @@ namespace Infrastructure.Data
             return await _dbSet.ToListAsync();
         }
 
+        public async Task<IEnumerable<T>> GetAllWithSpecAsync(ISpecification<T, Tkey> spec)
+        {
+            var query =ApplySpecification(spec);
+            return await query.ToListAsync();
+        }
+
         public async Task<T> GetByIdAsync(Tkey id)
         {
             return await _dbSet.FindAsync(id);
         }
 
+        public async Task<T> GetByIdWithSpecAsync(ISpecification<T, Tkey> spec)
+        {
+            var query = ApplySpecification(spec);
+            return await query.SingleOrDefaultAsync();
+        }
 
         public void Update(T entity)
         {
             _dbSet.Attach(entity);
             _context.Entry(entity).State = EntityState.Modified;
+        }
+
+
+        private IQueryable<T> ApplySpecification(ISpecification<T,Tkey> spec)
+        {
+            return SpecificationEvaluator<T,Tkey>.GetQuery(_dbSet, spec);
         }
     }
 }

@@ -37,7 +37,7 @@ namespace Infrastructure.Data
             if (!_repositories.ContainsKey(type))
             {
                 var repoType = typeof(GenericRepository<,>);
-                var repo = Activator.CreateInstance(repoType.MakeGenericType(typeof(TEntity)), _context);
+                var repo = Activator.CreateInstance(repoType.MakeGenericType(typeof(TEntity),typeof(Tkey)), _context);
                 _repositories.Add(type, repo);
 
             }

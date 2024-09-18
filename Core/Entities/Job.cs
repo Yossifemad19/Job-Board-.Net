@@ -13,6 +13,11 @@ namespace Core.Entities
         public string CompanyId { get; set; }
         public Company Company { get; set; }
 
-        public ICollection<Candidate> Candidates { get; set; }
+        public ICollection<Candidate> Candidates { get; set; }=new List<Candidate>();
+
+        public int GetCandidates()
+        {
+            return Candidates.Count;
+        }
     }
 }

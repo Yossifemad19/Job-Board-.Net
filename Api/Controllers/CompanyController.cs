@@ -1,4 +1,5 @@
 ﻿using Api.DTOs;
+using Api.DTOs.CompanyDtos;
 using AutoMapper;
 using Core.Entities;
 using Core.Interfaces;
