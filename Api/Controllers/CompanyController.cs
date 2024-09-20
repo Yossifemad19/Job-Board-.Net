@@ -102,20 +102,6 @@ namespace Api.Controllers
         }
         #endregion
 
-        #region Get Job Candidates
-        [Authorize(Roles ="Company")]
-        [HttpGet("get-job-candidates")]
-        public async Task<IActionResult> GetJobCandidates(int jobId)
-        {
-            var companyId = User.GetUserId();
-            var spec = new CompanyJobCandidatesSpecification(companyId, jobId);
-            var jobCandidates = await _unitOfWork.Repository<Candidate, int>().GetAllWithSpecAsync(spec);
-            if (jobCandidates is null || !jobCandidates.Any())
-                return NotFound("not exist candidates");
-            return Ok(_mapper.Map<IReadOnlyList<CandidateToReturnDto>>(jobCandidates));
-        }
-
-        #endregion
     }
 
 }

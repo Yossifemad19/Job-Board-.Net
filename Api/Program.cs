@@ -12,6 +12,7 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Api.DTOs.CompanyDtos;
 using Api.DTOs.UserDtos;
+using Api.Middlewares;
 
 namespace Api
 {
@@ -67,10 +68,15 @@ namespace Api
                 app.UseSwaggerUI();
             }
 
+            app.UseCors(options =>
+            options.AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader());
             app.UseHttpsRedirection();
 
             app.UseStaticFiles();
 
+            app.UseMiddleware<CustomForbiddenMiddleware>();
             app.UseAuthentication();
             app.UseAuthorization();
 

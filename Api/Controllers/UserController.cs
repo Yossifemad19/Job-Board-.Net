@@ -130,19 +130,6 @@ namespace Api.Controllers
         }
         #endregion
 
-        #region Get User Candidates
-        [Authorize(Roles = "User")]
-        [HttpGet("get-my-applications")]
-        public async Task<IActionResult> GetUserApplications()
-        {
-            var userId = User.GetUserId();
-            var spec = new UserApplicationSpecification(userId);
-            var applications=await _unitOfWork.Repository<Candidate,int>().GetAllWithSpecAsync(spec);
-            if (applications is null || !applications.Any())
-                return NotFound("Doesn't Exist Applications");
-
-            return Ok(_mapper.Map<IReadOnlyList<CandidateToReturnDto>>(applications));
-        }
-        #endregion
+ 
     }
 }

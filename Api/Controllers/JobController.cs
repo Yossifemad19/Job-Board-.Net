@@ -106,28 +106,7 @@ namespace Api.Controllers
         }
         #endregion
 
-        #region Apply To Job
-        [Authorize(Roles ="User")]
-        [HttpPost("apply")]
-        public async Task<IActionResult> ApplyToJob(int jobId)
-        {
-            var userId = User.GetUserId();
-            var candidate = new Candidate
-            {
-                JobId = jobId,
-                UserId = userId
-            };
-            _unitOfWork.Repository<Candidate,int>().Add(candidate);
-            var result = await _unitOfWork.CompleteAsync() > 0;
-            if (!result)
-                return BadRequest("apply to job failed");
-            var spec = new CandidateWithUserAndJobSpecification(candidate.Id);
-            var candidateSpec = await _unitOfWork.Repository<Candidate, int>().GetByIdWithSpecAsync(spec);
 
-            return Ok(_mapper.Map<CandidateToReturnDto>(candidateSpec));
-
-        }
-        #endregion
 
     }
 }
