@@ -1,9 +1,11 @@
 ﻿using Api.DTOs;
+using Api.DTOs.CandidateDtos;
 using Api.DTOs.UserDtos;
 using Api.Extensions;
 using AutoMapper;
 using Core.Entities;
 using Core.Interfaces;
+using Core.Specifications;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -125,6 +127,21 @@ namespace Api.Controllers
             user.ResumeUrl = $"{_config["ApiUrl"]}CVs/{fileName}";
 
             return Ok(user.ResumeUrl);
+        }
+        #endregion
+
+        #region Get User Candidates
+        [Authorize(Roles = "User")]
+        [HttpGet("get-my-applications")]
+        public async Task<IActionResult> GetUserApplications()
+        {
+            var userId = User.GetUserId();
+            var spec = new UserApplicationSpecification(userId);
+            var applications=await _unitOfWork.Repository<Candidate,int>().GetAllWithSpecAsync(spec);
+            if (applications is null || !applications.Any())
+                return NotFound("Doesn't Exist Applications");
+
+            return Ok(_mapper.Map<IReadOnlyList<CandidateToReturnDto>>(applications));
         }
         #endregion
     }

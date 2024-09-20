@@ -1,8 +1,12 @@
 ﻿using Api.DTOs;
+using Api.DTOs.CandidateDtos;
 using Api.DTOs.CompanyDtos;
+using Api.Extensions;
 using AutoMapper;
 using Core.Entities;
 using Core.Interfaces;
+using Core.Specifications;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers
@@ -92,10 +96,25 @@ namespace Api.Controllers
         public async Task<ActionResult<IEnumerable<GetCompanyDto>>> GetAllCompanies()
         {
             var companies=await _unitOfWork.CompanyRepository.GetAllAsync();
-            if (companies is null)
+            if (companies is null || companies.Any())
                 return NotFound("not exist companies");
             return Ok(_mapper.Map<IEnumerable<GetCompanyDto>>(companies));
         }
+        #endregion
+
+        #region Get Job Candidates
+        [Authorize(Roles ="Company")]
+        [HttpGet("get-job-candidates")]
+        public async Task<IActionResult> GetJobCandidates(int jobId)
+        {
+            var companyId = User.GetUserId();
+            var spec = new CompanyJobCandidatesSpecification(companyId, jobId);
+            var jobCandidates = await _unitOfWork.Repository<Candidate, int>().GetAllWithSpecAsync(spec);
+            if (jobCandidates is null || !jobCandidates.Any())
+                return NotFound("not exist candidates");
+            return Ok(_mapper.Map<IReadOnlyList<CandidateToReturnDto>>(jobCandidates));
+        }
+
         #endregion
     }
 

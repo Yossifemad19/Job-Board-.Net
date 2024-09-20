@@ -7,8 +7,6 @@ namespace Api.DTOs.JobDtos
     {
         public int Id { get; set; }
         public DateTime CreateAt { get; set; } 
-        public DateTime UpdatedAt { get; set; }
-        public bool IsActive { get; set; } = true;
         public string Title { get; set; }
         public string Description { get; set; }
 

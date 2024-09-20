@@ -19,5 +19,10 @@ namespace Core.Entities
         public string? Phone { get; set; }
         public string PasswordHash { get; set; }
         public string? ResumeUrl { get; set; }
+
+        public string GetUserName()
+        {
+            return $"{FirstName}_{LastName}";
+        }
     }
 }

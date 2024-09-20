@@ -1,4 +1,5 @@
-﻿using Api.DTOs.JobDtos;
+﻿using Api.DTOs.CandidateDtos;
+using Api.DTOs.JobDtos;
 using Api.Extensions;
 using AutoMapper;
 using Core.Entities;
@@ -84,7 +85,7 @@ namespace Api.Controllers
         {
             var spec = new JobWithCompanyAndCandidatesSpecification();
             var jobs = await _unitOfWork.Repository<Job,int>().GetAllWithSpecAsync(spec);
-            if (jobs == null)
+            if (jobs == null || !jobs.Any())
                 return NotFound("not exist jobs");
 
             return Ok(_mapper.Map<IReadOnlyList<JobToReturnForUser>>(jobs));
@@ -101,6 +102,29 @@ namespace Api.Controllers
             if (company is null)
                 return NotFound("not exist jobs");
             return Ok(_mapper.Map<IReadOnlyList<JobToReturnForCompany>>(company.Jobs));
+
+        }
+        #endregion
+
+        #region Apply To Job
+        [Authorize(Roles ="User")]
+        [HttpPost("apply")]
+        public async Task<IActionResult> ApplyToJob(int jobId)
+        {
+            var userId = User.GetUserId();
+            var candidate = new Candidate
+            {
+                JobId = jobId,
+                UserId = userId
+            };
+            _unitOfWork.Repository<Candidate,int>().Add(candidate);
+            var result = await _unitOfWork.CompleteAsync() > 0;
+            if (!result)
+                return BadRequest("apply to job failed");
+            var spec = new CandidateWithUserAndJobSpecification(candidate.Id);
+            var candidateSpec = await _unitOfWork.Repository<Candidate, int>().GetByIdWithSpecAsync(spec);
+
+            return Ok(_mapper.Map<CandidateToReturnDto>(candidateSpec));
 
         }
         #endregion
